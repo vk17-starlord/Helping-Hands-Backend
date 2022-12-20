@@ -17,6 +17,11 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please add a password'],
         select: false
     },
+    disability: {
+        type: String,
+        enum: ['Locomotor Disability','Visual Impairment','Hearing Impairment','Intellectual Disability','Multiple Disabilities'],
+        default: 'Visual Impairment' 
+     },
     role: {
        type: String,
        enum: ['user','companyuser','admin'],

@@ -26,7 +26,7 @@ router.put('/user/:id/isVerified', protect, authorize("admin"), async (req,res) 
             runValidators: true
         })
 
-        res.status(200).json({
+       return res.status(200).json({
             success: true,
             data: newUser
         })
@@ -41,7 +41,7 @@ router.put('/company/:id/isVerified', protect, authorize("admin"), async (req,re
     try {
         const company = await Company.findById(req.params.id);
         if(!company){
-            res.status(400).json({
+          return  res.status(400).json({
                 success: false,
                 data: `Company with ${req.params.id} not found`
             })
@@ -56,7 +56,7 @@ router.put('/company/:id/isVerified', protect, authorize("admin"), async (req,re
             runValidators: true
         })
 
-        res.status(200).json({
+      return  res.status(200).json({
             success: true,
             data: newCompany
         })
@@ -117,7 +117,7 @@ router.post('/login',  async (req,res) => {
           
         const user = await User.findOne({email}).select("+password")
         if(!user){
-            res.status(400).json({
+           return res.status(400).json({
                 success: false,
                 error: 'Invalid Credentials',
               
@@ -127,16 +127,16 @@ router.post('/login',  async (req,res) => {
         if(user.role === "admin"){
             const matchPassword = await bcrypt.compare(password, user.password)
             if(!matchPassword){
-                res.status(400).json({
+              return  res.status(400).json({
                     success: false,
                     error: 'Invalid Credentials'
                 })
             }else{
 
-                sendTokenResponse(user, 200, res)
+              return  sendTokenResponse(user, 200, res)
             }
         }else{
-            res.status(400).json({
+          return  res.status(400).json({
                 success: false,
                 data: 'Admin Access  Required'
             })
