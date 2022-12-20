@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const User = require('./models/User')
-const Company = require('./models/Company');
-const protect = require('./middleware/auth');
-const authorize = require('./middleware/authAdmin');
+const User = require('../models/User')
+const Company = require('../models/Company');
+const protect = require('../middleware/auth');
+const authorize = require('../middleware/authAdmin');
 const bcrypt = require('bcrypt')
 
 router.put('/user/:id/isVerified', protect, authorize("admin"), async (req,res) => {
