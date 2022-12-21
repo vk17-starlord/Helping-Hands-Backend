@@ -15,7 +15,7 @@ const JobSchema = new mongoose.Schema({
     },
     j_mode: {
         type: String,
-        enum: ["Work from home", "offline"],
+        enum: ["Work From Home", "Offline","Hybrid"],
         default: "offline"
     },
     j_duedate: {
@@ -27,10 +27,12 @@ const JobSchema = new mongoose.Schema({
     },
     j_skills: {
         type: [String],
+
         required: [true, "Please provide skills required for the job"]
     },
     j_whocanapply: {
         type: [String],
+        enum: ['Locomotor Disability','Visual Impairment','Hearing Impairment','Intellectual Disability','Multiple Disabilities'],
         required: [true, "Please Provide the Categories of people who can apply"]
     },
     j_openings: {
