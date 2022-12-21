@@ -38,6 +38,10 @@ const JobSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please provide the number of openings"]
     },
+    j_selectedusers: {
+        type: Number,
+        default: 0
+    },
     j_applied: [{
         user: {
             type: mongoose.Schema.ObjectId,

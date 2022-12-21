@@ -24,9 +24,9 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("applied.job").populate("applied.job.company");
     if (user) {
-      res.status(200).json({
+     return res.status(200).json({
         success: true,
         data: user,
       });

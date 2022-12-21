@@ -97,6 +97,99 @@ router.get("/:companyid/jobs", async (req, res) => {
   }
 });
 
+router.put('/:compid/:jobid/:userid/status', protect, authorize("companyuser"), async (req,res) => {
+  try {
+
+      const company = await Company.findById(req.params.compid)
+
+      if(company.user.toString() !== req.user.id){
+          return res.status(400).json({
+              success: false,
+              data: `User ${req.user.id} is not authorized to update the status`
+          })
+      }else{
+
+          let user = await User.find({
+              applied: {
+                  job: req.params.jobid,
+              }
+          })
+
+          await Job.findOne({_id: req.params.jobid})
+      
+          if(!user){
+              return res.status(404).json({
+                  success: false,
+                  data: "User Not found"
+              })
+          }
+
+          await User.findByIdAndUpdate(req.params.userid,{
+              applied: {
+                  user: req.params.userid,
+                  status: req.body.status
+              }
+          }, {
+              new: true,
+              runValidators: true
+          })
+
+
+             if(req.body.status==="Hired"){
+              console.log("Hired")
+
+              await Job.updateOne(
+                {_id:req.params.jobid },
+                { $set: { "j_applied.$[].status": "Not Selected" } },
+                {
+                  new: true,
+                  runValidators: true
+              }
+               )
+              
+               await Job.updateOne(
+
+                { _id: req.params.jobid, "j_applied.user": req.params.userid },
+    
+                {$set: {"j_applied.$.status":req.body.status}},{
+                  new: true,
+                  runValidators: true
+              }
+    
+               )
+
+               return res.status(200).json({
+                success: true,
+                data: "Status Updated Successfully"
+            })
+
+             }
+          
+
+          
+          
+             const res=  await Job.updateOne(
+
+              { _id: req.params.jobid, "j_applied.user": req.params.userid },
+  
+              {$set: {"j_applied.$.status":req.body.status}},{
+                new: true,
+                runValidators: true
+               }
+  
+             )
+             
+             
+         return res.status(200).json({
+              success: true,
+              data: "Status Updated Successfully"
+          })
+      }
+  } catch (err) {
+      return res.status(500).json({err: err.message})
+  }
+})
+
 router.get("/:companyid/jobs/:jobid", protect, authorize("companyuser"), async (req, res) => {
     try {
       const job = await Job.find({ 
@@ -113,6 +206,7 @@ router.get("/:companyid/jobs/:jobid", protect, authorize("companyuser"), async (
           model: 'User'
         } 
      })
+
       if (job) {
         res.status(200).json({
           success: true,
