@@ -105,7 +105,14 @@ router.get("/:companyid/jobs/:jobid", protect, authorize("companyuser"), async (
     }).populate(
         "company",
         "c_name , c_photo , c_location , c_website "
-      ).populate('j_applied.user','name,email,certificate,photo');
+      )
+      .populate({ 
+        path: 'j_applied',
+        populate: {
+          path: 'user',
+          model: 'User'
+        } 
+     })
       if (job) {
         res.status(200).json({
           success: true,
