@@ -47,6 +47,10 @@ const JobSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please provide the valid age"]
     },
+    j_resultType: {
+        type: [String],
+        default: ["Introvert", "Extrovert", "Arrogant", "Polite"]
+    },
     company: {
         type: mongoose.Schema.ObjectId,
         ref: 'Company'
