@@ -9,7 +9,7 @@ const Job = require("../models/Job");
 
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find({ role: "user" });
+    const users = await User.find({ role: "user" }).populate("ques_response.question");
     if (users) {
       res.status(200).json({
         success: true,
@@ -318,28 +318,42 @@ router.put("/:id/apply/:jobid", protect, async (req, res) => {
       });
     }
 
-    const newUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        $push: {
-          applied: {
-            job: req.params.jobid,
+    if(user.isVerified === true){
+      const newUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          $push: {
+            applied: {
+              job: req.params.jobid,
+            },
           },
         },
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    res.status(200).json({
-      success: true,
-      data: newUser,
-    });
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      res.status(200).json({
+        success: true,
+        data: newUser,
+      });
+    }else{
+      res.status(200).json({
+        success: true,
+        error: "User is not Verified yet... You can apply to the job once you're verified."
+    })
+    }
   } catch (err) {
     return res.status(500).json({ err: err.message });
   }
 });
+
+router.put('/:compid/applied', protect, authorize("companyuser"), async (req,res) => {
+  try {
+    
+  } catch (err) {
+    return res.status(500).json({err: err.message})
+  }
+}) 
 
 module.exports = router;

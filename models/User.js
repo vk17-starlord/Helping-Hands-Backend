@@ -49,6 +49,17 @@ const UserSchema = new mongoose.Schema({
             enum: ["Applied", "Under Review", "Hired", "Not Selected"],
             default: "Applied"
         }
+    }],
+    ques_response: [{
+        question: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'QuestionAnswer'
+        },
+        answer: {
+            type: Number,
+            required: true,
+            enum: [1,3,5]
+        }
     }]
 }, {
     timestamps: true
