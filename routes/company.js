@@ -27,7 +27,7 @@ router.get('/', async (req,res) => {
 router.get('/:id', async (req,res) => {
 try {
      
-        const company = await Company.findById({user:req.params.id})
+        const company = await Company.findById({_id:req.params.id.toString()})
         if(!company){
             return res.status(400).json({
                 success: false,
