@@ -24,7 +24,7 @@ router.get('/', async (req,res) => {
 router.get('/:companyid/jobs', async (req,res) => {
     try {
 
-        const job = await Job.find({company: req.params.companyid}).populate("company","c_name , c_photo , c_location , c_website ")
+        const job = await Job.find({company: req.params.companyid})
         if(job){
             res.status(200).json({
                 success: true,
