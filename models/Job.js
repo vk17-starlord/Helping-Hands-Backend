@@ -31,6 +31,7 @@ const JobSchema = new mongoose.Schema({
     },
     j_whocanapply: {
         type: [String],
+        enum: ['Locomotor Disability','Visual Impairment','Hearing Impairment','Intellectual Disability','Multiple Disabilities'],
         required: [true, "Please Provide the Categories of people who can apply"]
     },
     j_openings: {
@@ -44,6 +45,10 @@ const JobSchema = new mongoose.Schema({
     j_validAge: {
         type: Number,
         required: [true, "Please provide the valid age"]
+    },
+    j_resultType: {
+        type: [String],
+        default: ["Introvert", "Extrovert", "Arrogant", "Polite"]
     },
     company: {
         type: mongoose.Schema.ObjectId,

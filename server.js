@@ -40,6 +40,7 @@ app.use('/api/v1/user', require('./routes/user'))
 app.use('/api/v1/company', require('./routes/company'))
 app.use('/api/v1/job', require('./routes/job'))
 app.use('/api/v1/admin', require('./routes/admin'))
+app.use('/api/v1/question', require('./routes/questionanswer'))
 
 const PORT = process.env.PORT || 3000
 const server = app.listen(PORT, () => {
