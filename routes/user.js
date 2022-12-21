@@ -90,7 +90,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    
+
 
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {
@@ -310,18 +310,47 @@ router.put("/:id/apply/:jobid", protect, async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        data: `User with ${req.params.id} not found`,
+        error: `User with ${req.params.id} not found`,
       });
     }
 
     if (req.params.id !== req.user.id) {
       return res.status(400).json({
         success: false,
-        data: `User with ${req.user.id} is not authorize to update the user`,
+        error: `User with ${req.user.id} is not authorize to update the user`,
       });
     }
 
+
+
     if(user.isVerified === true){
+       
+       const alreadyApplied = await Job.find({j_applied:{$elemMatch:{user:req.params.id}}  })
+      
+       if(alreadyApplied.length!=0){
+        console.log(alreadyApplied.length,"here")
+        return res.status(400).json({
+          success: false,
+          error: "User Has Already Applied"
+         })
+       }
+ 
+ 
+       await Job.findByIdAndUpdate(
+        req.params.jobid,
+        {
+          $push: {
+            j_applied: {
+              user: req.params.id,
+            },
+          },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
       const newUser = await User.findByIdAndUpdate(
         req.params.id,
         {
@@ -341,8 +370,8 @@ router.put("/:id/apply/:jobid", protect, async (req, res) => {
         data: newUser,
       });
     }else{
-      res.status(200).json({
-        success: true,
+     return res.status(400).json({
+        success: false,
         error: "User is not Verified yet... You can apply to the job once you're verified."
     })
     }

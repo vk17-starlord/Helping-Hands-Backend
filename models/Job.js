@@ -25,11 +25,10 @@ const JobSchema = new mongoose.Schema({
     j_applicants: {
         type: Number
     },
-    j_skills: {
-        type: [String],
-
+    j_skills: [{
+        type: String,
         required: [true, "Please provide skills required for the job"]
-    },
+    }],
     j_whocanapply: {
         type: [String],
         enum: ['Locomotor Disability','Visual Impairment','Hearing Impairment','Intellectual Disability','Multiple Disabilities'],
@@ -39,7 +38,18 @@ const JobSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please provide the number of openings"]
     },
-    j_salary: {
+    j_applied: [{
+        user: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        },
+        status: {
+            type: String,
+            enum: ["Applied", "Under Review", "Hired", "Not Selected"],
+            default: "Applied"
+        }
+    }]    ,
+   j_salary: {
         type: Number,
         required: [true, "Please provide the salary"]
     },
