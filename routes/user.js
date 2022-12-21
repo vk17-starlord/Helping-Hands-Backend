@@ -39,7 +39,7 @@ router.get("/:id", protect, async (req, res) => {
 router.post("/register", async (req, res) => {
   try {
     console.log(req.body);
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role , disability } = req.body;
 
     // const user = await User.findOne({email})
     // console.log(user)
@@ -66,6 +66,7 @@ router.post("/register", async (req, res) => {
       name,
       email,
       role,
+      disability,
       password: hashedPassword,
     });
 
@@ -88,6 +89,8 @@ router.post("/login", async (req, res) => {
         error: "Invalid Credentials",
       });
     }
+
+    
 
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {
