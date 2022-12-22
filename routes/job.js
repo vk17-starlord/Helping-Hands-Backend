@@ -126,7 +126,7 @@ router.put('/:compid/:jobid/:userid/status', protect, authorize("companyuser"), 
 
           await User.findByIdAndUpdate(req.params.userid,{
               applied: {
-                  user: req.params.userid,
+                  job: req.params.jobid,
                   status: req.body.status
               }
           }, {
@@ -154,7 +154,7 @@ router.put('/:compid/:jobid/:userid/status', protect, authorize("companyuser"), 
                 {$set: {"j_applied.$.status":req.body.status}},{
                   new: true,
                   runValidators: true
-              }
+                }
     
                )
 
@@ -163,6 +163,8 @@ router.put('/:compid/:jobid/:userid/status', protect, authorize("companyuser"), 
                 data: "Status Updated Successfully"
             })
 
+            
+             
              }
           
 

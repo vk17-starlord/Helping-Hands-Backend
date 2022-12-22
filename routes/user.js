@@ -24,7 +24,16 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate("applied.job").populate("applied.job.company");
+    const user = await User.findById(req.params.id).populate({ 
+      path: 'applied',
+      option: {strictPopulate: false} ,
+      populate: {
+        path: 'job',
+        model: 'Job'
+      },
+     
+   })
+
     if (user) {
      return res.status(200).json({
         success: true,
@@ -324,51 +333,51 @@ router.put("/:id/apply/:jobid", protect, async (req, res) => {
 
 
     if(user.isVerified === true){
-       
-       const alreadyApplied = await Job.find({j_applied:{$elemMatch:{user:req.params.id}}  })
-      
-       if(alreadyApplied.length!=0){
-        console.log(alreadyApplied.length,"here")
-        return res.status(400).json({
-          success: false,
-          error: "User Has Already Applied"
-         })
-       }
- 
- 
-       await Job.findByIdAndUpdate(
-        req.params.jobid,
-        {
-          $push: {
-            j_applied: {
-              user: req.params.id,
-            },
-          },
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
 
-      const newUser = await User.findByIdAndUpdate(
-        req.params.id,
-        {
-          $push: {
-            applied: {
-              job: req.params.jobid,
+       const applied =await Job.findOne({_id:req.params.jobid ,  j_applied : { $elemMatch: { user: req.params.id } } })
+       console.log(applied,"applied already bitch")   
+       if(!applied){
+        await Job.findByIdAndUpdate(
+          req.params.jobid,
+          {
+            $push: {
+              j_applied: {
+                user: req.params.id,
+              },
             },
           },
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-      res.status(200).json({
-        success: true,
-        data: newUser,
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+  
+        const newUser = await User.findByIdAndUpdate(
+          req.params.id,
+          {
+            $push: {
+              applied: {
+                  job: req.params.jobid,
+              },  
+            },
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+  
+       return res.status(200).json({
+          success: true,
+          data: newUser,
+        });
+       }
+  
+       return res.status(400).json({
+        success: false,
+        error: `User Has Already Applied For This Job`,
       });
+      
     }else{
      return res.status(400).json({
         success: false,
