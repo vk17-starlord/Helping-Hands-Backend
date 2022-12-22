@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
         enum: ['Locomotor Disability','Visual Impairment','Hearing Impairment','Intellectual Disability','Multiple Disabilities'],
         default: 'Visual Impairment' 
      },
+
+
+
+
     role: {
        type: String,
        enum: ['user','companyuser','admin'],
@@ -65,11 +69,14 @@ const UserSchema = new mongoose.Schema({
     timestamps: true
 })
 
+
+
 UserSchema.methods.getSignedJwtToken = function(){
     return jwt.sign({id: this._id}, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     })
 }
+
 
 module.exports = mongoose.model('User', UserSchema)
 

@@ -5,10 +5,6 @@ const QuestionAnswerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    type_result: {
-        type: String,
-        enum: ["Introvert", "Extrovert", "Arrogant", "Polite"]
-    }
 }, {
     timestamps: true
 })

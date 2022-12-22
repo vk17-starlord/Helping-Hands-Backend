@@ -18,10 +18,10 @@ router.get('/', protect, authorize('admin'), async (req,res) => {
     }
 })
 
-router.post('/', protect, authorize('admin'),  async (req, res) => {
+router.post('/', protect ,  async (req, res) => {
     try {
-        const {question, type_result} = req.body
-        if(!question || !type_result){
+        const {question} = req.body
+        if(!question){
             return res.status(400).json({
                 success: false,
                 data: "Please Enter question"
@@ -39,43 +39,33 @@ router.post('/', protect, authorize('admin'),  async (req, res) => {
     }
 })
 
-router.put('/:ques_id/:id/answers_response', protect, authorize('admin'), async (req, res) => {
+router.put('/addAnswerResponse/:id', protect , async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
-        const questions = await QuestionAnswer.findById(req.params.ques_id)
-
-        req.body.question = req.params.ques_id
-
-        if(!user || !questions){
-            return res.status(404).json({
-                success: false,
-                data: "Not Found!!"
-            })
+        if(!user){
+            return res.status(200).json({success:false,error:"Invalid User"})
         }
 
-        if(user.ques_response.question === req.params.ques_id){
-            return res.status(400).json({
-                success: false,
-                data: "Same Question Available"
-            })
+        if(!req.body.question || !req.body.answer){
+            return res.status(200).json({success:false,error:"Please Enter All Fields"})
         }
 
-        if(questions._id.toString() === req.params.ques_id ){
-            const user_res = await User.findByIdAndUpdate(req.params.id, req.body,{
-                new: true,
-                runValidators: true
-            })
+        const {question,answer} = req.body;
 
-            res.status(200).json({
-                success: true,
-                data: user_res
-            })
-        }else{
-            return res.status(400).json({
-                success: false,
-                data: "Something went wrong"
-            })
-        } 
+
+        const Validquestion = await QuestionAnswer.findById(req.body.question)
+        
+        if(Validquestion){
+           
+          await User.updateOne(
+                {_id:req.params.id},
+                { $push: { ques_response: { question,answer} } }
+            )
+
+        }
+
+
+        return res.status(200).json({success:true,body:question})
     } catch (err) {
         return res.status(500).json({err: err.message})
     }

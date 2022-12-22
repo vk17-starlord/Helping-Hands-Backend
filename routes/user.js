@@ -388,4 +388,17 @@ router.put('/:compid/applied', protect, authorize("companyuser"), async (req,res
   }
 }) 
 
+
+router.put('/:id/:ques_id/answers_response', protect, async (req, res) => {
+  try {
+  
+    const user = await User.findById(req.params.id);
+
+
+  } catch (err) {
+      return res.status(500).json({err: err.message})
+  }
+})
+
+
 module.exports = router;
