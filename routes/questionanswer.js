@@ -4,7 +4,7 @@ const authorize = require('../middleware/authAdmin')
 const QuestionAnswer = require('../models/QuestionAnswer')
 const User = require('../models/User')
 
-router.get('/', protect, authorize('admin'), async (req,res) => {
+router.get('/', protect, protect, async (req,res) => {
     try {
         const questions = await QuestionAnswer.find()
         if(questions){
@@ -43,14 +43,16 @@ router.put('/addAnswerResponse/:id', protect , async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if(!user){
-            return res.status(200).json({success:false,error:"Invalid User"})
+            return res.status(400).json({success:false,error:"Invalid User"})
         }
 
+        console.log(req.body, req.body)
         if(!req.body.question || !req.body.answer){
-            return res.status(200).json({success:false,error:"Please Enter All Fields"})
+            return res.status(400).json({success:false,error:"Please Enter All Fields"})
         }
 
         const {question,answer} = req.body;
+        
 
 
         const Validquestion = await QuestionAnswer.findById(req.body.question)
